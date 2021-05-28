@@ -6,7 +6,7 @@ package clients.catalogue;
  * @author M A Smith (c) June 2014
  */
 
-public class CatalogueController
+public class CatalogueController 
 {
   private CatalogueModel model = null;
   private CatalogueView  view  = null;
