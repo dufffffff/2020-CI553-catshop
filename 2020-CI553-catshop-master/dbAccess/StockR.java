@@ -107,7 +107,37 @@ public class StockR implements StockReader
       throw new StockException( "SQL exists: " + e.getMessage() );
     }
   }
+  /**
+   * Checks if the product exits in the stock list
+   * @param pName The product name
+   * @return true if exists otherwise false
+   */
+  public synchronized boolean existsN( String pName )
+         throws StockException
+  {
+    
+    try
+    {
+      ResultSet rs   = getStatementObject().executeQuery(
+        "select price from ProductTable " +
+        "  where  ProductTable.description = '" + pName + "'"
+      );
+      boolean res = rs.next();
+      DEBUG.trace( "DB StockR: existsN(%s) -> %s", 
+                    pName, ( res ? "T" : "F" ) );
+      return res;
+    } catch ( SQLException e )
+    {
+      throw new StockException( "SQL exists: " + e.getMessage() );
+    }
+  }
 
+  
+  
+  
+  
+  
+  
   /**
    * Returns details about the product in the stock list.
    *  Assumed to exist in database.
@@ -140,6 +170,41 @@ public class StockR implements StockReader
       throw new StockException( "SQL getDetails: " + e.getMessage() );
     }
   }
+  
+  /**
+   * Returns details about the product in the stock list.
+   *  Assumed to exist in database.
+   * @param pNum The product number
+   * @return Details in an instance of a Product
+   */
+  public synchronized Product getDetailsN( String pName )
+         throws StockException
+  {
+    try
+    {
+      Product   dt = new Product( "0", "", 0.00, 0 );
+      ResultSet rs = getStatementObject().executeQuery(
+        "select productNo" +
+        "  from ProductTable" +
+        "  where  ProductTable.description LIKE '" + pName + "' "
+      );
+      System.out.print("  where  ProductTable.description LIKE '%" + pName + "%' ");
+      if ( rs.next() )
+      {
+    	  
+        dt.setProductNum(rs.getString( "productNo" ) );
+        dt.setDescription(pName);
+
+
+      }
+      rs.close();
+      return dt;
+    } catch ( SQLException e )
+    {
+      throw new StockException( "SQL getDetails: " + e.getMessage() );
+    }
+  }
+
 
   /**
    * Returns 'image' of the product

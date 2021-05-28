@@ -94,4 +94,28 @@ public class Basket extends ArrayList<Product> implements Serializable
     }
     return sb.toString();
   }
+  
+  public String getDetailsN()
+  {
+	    Locale uk = Locale.UK;
+	    StringBuilder sb = new StringBuilder(256);
+	    Formatter     fr = new Formatter(sb, uk);
+	    String csign = (Currency.getInstance( uk )).getSymbol();
+	    double total = 0.00;
+	      
+	    if ( this.size() > 0 )
+	    {
+	      for ( Product pr: this )
+	      {
+	        int number = pr.getQuantity();
+	        fr.format("%-7s",       pr.getProductNum() );
+	        fr.format("%-14.14s ",  pr.getDescription() );
+	        fr.format("\n");
+
+	      }
+
+	      fr.close();
+	    }
+	    return sb.toString();
+	  }
 }

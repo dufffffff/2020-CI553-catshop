@@ -1,4 +1,4 @@
-package clients.cashier;
+package clients.catalogue;
 
 import catalogue.Basket;
 import catalogue.Product;
@@ -12,11 +12,11 @@ import java.util.Observable;
  * @author  Mike Smith University of Brighton
  * @version 1.0
  */
-public class CashierModel extends Observable
+public class CatalogueModel extends Observable
 {
-  private enum State { process, checked }
 
-  private State       theState   = State.process;   // Current state
+
+ 
   private Product     theProduct = null;            // Current product
   private Basket      theBasket  = null;            // Bought items
 
@@ -30,7 +30,7 @@ public class CashierModel extends Observable
    * @param mf The factory to create the connection objects
    */
 
-  public CashierModel(MiddleFactory mf)
+  public CatalogueModel(MiddleFactory mf)
   {
     try                                           // 
     {      
@@ -38,9 +38,9 @@ public class CashierModel extends Observable
       theOrder = mf.makeOrderProcessing();        // Process order
     } catch ( Exception e )
     {
-      DEBUG.error("CashierModel.constructor\n%s", e.getMessage() );
+      DEBUG.error("CatalogueModel.constructor\n%s", e.getMessage() );
     }
-    theState   = State.process;                  // Current state
+
   }
   
   /**
@@ -56,88 +56,82 @@ public class CashierModel extends Observable
    * Check if the product is in Stock
    * @param productNum The product number
    */
-  public void doCheck(String productNum )
+  public void doCheck(String productName )
   {
-    String theAction = "";
-    theState  = State.process;                  // State process
-    pn  = productNum.trim();                    // Product no.
+	
+    String theOutput = "";
+ 
+    pn  = productName.trim();                    // Product name
     int    amount  = 1;                         //  & quantity
     try
     {
-      if ( theStock.exists( pn ) )              // Stock Exists?
+      if ( theStock.existsN( pn ) )              // Stock Exists?
       {                                         // T
-        Product pr = theStock.getDetails(pn);   //  Get details
-        if ( pr.getQuantity() >= amount )       //  In stock?
-        {                                       //  T
-          theAction =                           //   Display 
-            String.format( "%s : %7.2f (%2d) ", //
-              pr.getDescription(),              //    description
-              pr.getPrice(),                    //    price
-              pr.getQuantity() );               //    quantity     
+        Product pr = theStock.getDetailsN(pn);  //  Get details
+        
+                                               //  T
+          theOutput =                           //   Display 
+            String.format( "Found Product: %s", //
+              pr.getDescription() );              //    quantity     
           theProduct = pr;                      //   Remember prod.
           theProduct.setQuantity( amount );     //    & quantity
-          theState = State.checked;             //   OK await BUY 
-        } else {                                //  F
-          theAction =                           //   Not in Stock
-            pr.getDescription() +" not in stock";
-        }
+        
+        
+        
       } else {                                  // F Stock exists
-        theAction =                             //  Unknown
-          "Unknown product number " + pn;       //  product no.
+        theOutput =                             //  Unknown
+          "Unknown product name: " + pn;       //  product no.
       }
     } catch( StockException e )
     {
       DEBUG.error( "%s\n%s", 
             "CashierModel.doCheck", e.getMessage() );
-      theAction = e.getMessage();
+      theOutput = e.getMessage();
     }
-    setChanged(); notifyObservers(theAction);
+    setChanged(); notifyObservers(theOutput);
   }
 
   /**
    * Buy the product
    */
-  public void doBuy()
+  public void doDisplay()
   {
     String theAction = "";
-    int    amount  = 1;                         //  & quantity
+                             //  & quantity
     try
     {
-      if ( theState != State.checked )          // Not checked
-      {                                         //  with customer
-        theAction = "Check if OK with customer first";
-      } else {
-        boolean stockBought =                   // Buy
-          theStock.buyStock(                    //  however
+
+        boolean stockFound =                   // Buy
+          theStock.buyStock(  //  however
             theProduct.getProductNum(),         //  may fail              
             theProduct.getQuantity() );         //
-        if ( stockBought )                      // Stock bought
+        if ( stockFound )                      // Stock bought
         {                                       // T
           makeBasketIfReq();                    //  new Basket ?
           theBasket.add( theProduct );          //  Add to bought
-          theAction = "Purchased " +            //    details
+          theAction = "Found " +            //    details
                   theProduct.getDescription();  //
         } else {                                // F
           theAction = "!!! Not in stock";       //  Now no stock
         }
-      }
+      
     } catch( StockException e )
     {
       DEBUG.error( "%s\n%s", 
             "CashierModel.doBuy", e.getMessage() );
       theAction = e.getMessage();
     }
-    theState = State.process;                   // All Done
+
     setChanged(); notifyObservers(theAction);
   }
   
   /**
    * Customer pays for the contents of the basket
    */
-  public void doBought()
+  public void doClear()
   {
     String theAction = "";
-    int    amount  = 1;                       //  & quantity
+  
     try
     {
       if ( theBasket != null &&
@@ -147,7 +141,7 @@ public class CashierModel extends Observable
         theBasket = null;                     //  reset
       }                                       //
       theAction = "Next customer";            // New Customer
-      theState = State.process;               // All Done
+
       theBasket = null;
     } catch( OrderException e )
     {

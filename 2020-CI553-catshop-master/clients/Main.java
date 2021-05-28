@@ -5,6 +5,9 @@ import clients.backDoor.BackDoorView;
 import clients.cashier.CashierController;
 import clients.cashier.CashierModel;
 import clients.cashier.CashierView;
+import clients.catalogue.CatalogueController;
+import clients.catalogue.CatalogueModel;
+import clients.catalogue.CatalogueView;
 import clients.collection.CollectController;
 import clients.collection.CollectModel;
 import clients.collection.CollectView;
@@ -62,6 +65,7 @@ class Main
     if ( many ) 
       startDisplayGUI_MVC( mlf );
     startCollectionGUI_MVC( mlf );
+    startCataloguerGUI_MVC( mlf );
   }
   
   public void startCustomerGUI_MVC(MiddleFactory mlf )
@@ -70,6 +74,7 @@ class Main
     window.setTitle( "Customer Client MVC");
     window.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
     Dimension pos = PosOnScrn.getPos();
+    
     
     CustomerModel model      = new CustomerModel(mlf);
     CustomerView view        = new CustomerView( window, mlf, pos.width, pos.height );
@@ -80,6 +85,11 @@ class Main
     window.setVisible(true);         // start Screen
   }
 
+  // CODE FOR CATALOGUE CLIENT
+  
+
+ 
+  
   /**
    * start the cashier client
    * @param mlf A factory to create objects to access the stock list
@@ -99,8 +109,26 @@ class Main
     model.addObserver( view );       // Add observer to the model
     window.setVisible(true);         // Make window visible
     model.askForUpdate();            // Initial display
+    
+    
   }
+  
+  public void startCataloguerGUI_MVC(MiddleFactory mlf )
+  {
+    JFrame  window = new JFrame();
+    window.setTitle( "Catalogue Client MVC");
+    window.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+    Dimension pos = PosOnScrn.getPos();
+    
+    CatalogueModel model      = new CatalogueModel(mlf);
+    CatalogueView view        = new CatalogueView( window, mlf, pos.width, pos.height );
+    CatalogueController cont  = new CatalogueController( model, view );
+    view.setController( cont );
 
+    model.addObserver( view );       // Add observer to the model
+    window.setVisible(true);         // Make window visible
+    model.askForUpdate();            // Initial display
+  }
   public void startBackDoorGUI_MVC(MiddleFactory mlf )
   {
     JFrame  window = new JFrame();

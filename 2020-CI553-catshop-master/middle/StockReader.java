@@ -20,7 +20,15 @@ public interface StockReader
    * @throws StockException if issue
    */
   boolean exists(String pNum) throws StockException;
-         
+ 
+  /**
+   * Checks if the product exits in the stock list
+   * @param pName Product name
+   * @return true if exists otherwise false
+   * @throws StockException if issue
+   */
+  boolean existsN(String pName) throws StockException;
+          
   /**
    * Returns details about the product in the stock list
    * @param pNum Product nymber
@@ -29,6 +37,14 @@ public interface StockReader
    */
   
   Product getDetails(String pNum) throws StockException;
+  /**
+   * Returns details about the product in the stock list
+   * @param pNum Product nymber
+   * @return StockNumber, Description, Price, Quantity
+   * @throws StockException if issue
+   */
+  
+  Product getDetailsN(String pNum) throws StockException;
   
   
   /**
@@ -37,6 +53,6 @@ public interface StockReader
    * @return Image
    * @throws StockException if issue
    */
-  
+
   ImageIcon getImage(String pNum) throws StockException;
 }

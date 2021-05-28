@@ -29,7 +29,7 @@ public class StockRW extends StockR implements StockReadWriter
    */
   public StockRW() throws StockException
   {    
-    super();        // Connection done in StockR's constructor
+    super();        // Connection done in StockR's constructor 
   }
   
   /**

@@ -1,4 +1,4 @@
-package clients.cashier;
+package clients.catalogue;
 
 import catalogue.Basket;
 import middle.MiddleFactory;
@@ -15,26 +15,27 @@ import java.util.Observer;
  * View of the model
  * @author  M A Smith (c) June 2014  
  */
-public class CashierView implements Observer
+public class CatalogueView implements Observer
 {
   private static final int H = 300;       // Height of window pixels
   private static final int W = 400;       // Width  of window pixels
   
   private static final String CHECK  = "Check";
-  private static final String BUY    = "Buy";
-  private static final String BOUGHT = "Bought";
+  private static final String DISPLAY  = "Display";
+  private static final String CLEAR  = "Clear";
 
   private final JLabel      theAction  = new JLabel();
   private final JTextField  theInput   = new JTextField();
   private final JTextArea   theOutput  = new JTextArea();
   private final JScrollPane theSP      = new JScrollPane();
   private final JButton     theBtCheck = new JButton( CHECK );
-  private final JButton     theBtBuy   = new JButton( BUY );
-  private final JButton     theBtBought= new JButton( BOUGHT );
+  private final JButton     theBtDisplay = new JButton( DISPLAY );
+  private final JButton     theBtClear = new JButton( CLEAR );
+
 
   private StockReadWriter theStock     = null;
   private OrderProcessing theOrder     = null;
-  private CashierController cont       = null;
+  private CatalogueController cont       = null;
   
   /**
    * Construct the view
@@ -44,7 +45,7 @@ public class CashierView implements Observer
    * @param y     y-coordinate of position of window on screen  
    */
           
-  public CashierView(  RootPaneContainer rpc,  MiddleFactory mf, int x, int y  )
+  public CatalogueView(  RootPaneContainer rpc,  MiddleFactory mf, int x, int y  )
   {
     try                                           // 
     {      
@@ -66,16 +67,17 @@ public class CashierView implements Observer
     theBtCheck.addActionListener(                   // Call back code
       e -> cont.doCheck( theInput.getText() ) );
     cp.add( theBtCheck );                           //  Add to canvas
+    
+    theBtDisplay.setBounds( 16, 25+60*1, 80, 40 );      // Buy button 
+    theBtDisplay.addActionListener(                     // Call back code
+      e -> cont.doDisplay() );
+    cp.add( theBtDisplay );                             //  Add to canvas
 
-    theBtBuy.setBounds( 16, 25+60*1, 80, 40 );      // Buy button 
-    theBtBuy.addActionListener(                     // Call back code
-      e -> cont.doBuy() );
-    cp.add( theBtBuy );                             //  Add to canvas
+    theBtClear.setBounds( 16, 25+60*3, 80, 40 );   // Clear Button
+    theBtClear.addActionListener(                  // Call back code
+      e -> cont.doClear() );
+    cp.add( theBtClear );  
 
-    theBtBought.setBounds( 16, 25+60*3, 80, 40 );   // Clear Button
-    theBtBought.addActionListener(                  // Call back code
-      e -> cont.doBought() );
-    cp.add( theBtBought );                          //  Add to canvas
 
     theAction.setBounds( 110, 25 , 270, 20 );       // Message area
     theAction.setText( "" );                        // Blank
@@ -99,7 +101,7 @@ public class CashierView implements Observer
    * @param c   The controller
    */
 
-  public void setController( CashierController c )
+  public void setController( CatalogueController c )
   {
     cont = c;
   }
@@ -112,14 +114,14 @@ public class CashierView implements Observer
   @Override
   public void update( Observable modelC, Object arg )
   {
-    CashierModel model  = (CashierModel) modelC;
+	  CatalogueModel model  = (CatalogueModel) modelC;
     String      message = (String) arg;
     theAction.setText( message );
     Basket basket = model.getBasket();
     if ( basket == null )
-      theOutput.setText( "Customers order" );
+      theOutput.setText( "Catalog Query" );
     else
-      theOutput.setText( basket.getDetails() );
+      theOutput.setText( basket.getDetailsN() );
     
     theInput.requestFocus();               // Focus is here
   }
