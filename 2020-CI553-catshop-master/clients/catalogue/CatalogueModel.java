@@ -126,7 +126,7 @@ public class CatalogueModel extends Observable
   }
   
   /**
-   * Customer pays for the contents of the basket
+   
    */
   public void doClear()
   {
